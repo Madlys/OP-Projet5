@@ -14,7 +14,11 @@ async function getapi(url) {
         //Create HTML anchor
         let itemElement = document.querySelector("#items");
         let a = document.createElement("a");
-        a.setAttribute("href", "./product.html?id=" + data[i]._id);
+        let params = new URLSearchParams("id", data[i]._id).toString();
+        let Url = "./product.html?" + params;
+        a.setAttribute("href", Url);
+        // or shorter => a.setAttribute("href", "./product.html?" + URLSearchParams("id", data[i]._id).toString());
+        // or shorter, using object data => a.setAttribute("href", "./product.html?id=" + data[i]._id);
         itemElement.appendChild(a);
 
         let article = document.createElement("article");
