@@ -52,18 +52,19 @@ async function productPage(url) {
     }
 
     //Save information by clicking on the "Ajout au panier" button
-    
+    let infos = [];
+    document.getElementById("addToCart").addEventListener("click", function () {
+        //Product quantity
+        let quantity = document.querySelector("#quantity").value;
 
-    //Product quantity
-    let quantity;
+        //Product color chosed
+        let colorChosed = document.querySelector("#colors").value;
 
-    //Product color chosed
-    let colorChosed = document.querySelector("#colors").value;
-
-    //Add product info to an array
-    let infos = [id, quantity, colorChosed]
-    console.log(infos)
-
+        //Add product info to an array
+        infos = [id, quantity, colorChosed]
+    });
+        productInfos.push(infos);
+        console.log(productInfos)
 }
 
 productPage(apiUrl);
