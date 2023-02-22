@@ -2,7 +2,7 @@
 const apiUrl = "http://localhost:3000/api/products";
 
 // Defining async function
-async function getapi(url) {
+async function home(url) {
     // Storing response thanks to fetch() method
     const response = await fetch(url);
 
@@ -14,7 +14,7 @@ async function getapi(url) {
         //Create HTML anchor
         let itemElement = document.querySelector("#items");
         let a = document.createElement("a");
-        let params = new URLSearchParams("id", data[i]._id).toString();
+        let params = new URLSearchParams("id=" + data[i]._id);
         let Url = "./product.html?" + params;
         a.setAttribute("href", Url);
         // or shorter => a.setAttribute("href", "./product.html?" + URLSearchParams("id", data[i]._id).toString());
@@ -44,4 +44,4 @@ async function getapi(url) {
     }
 }
 // Calling that async function
-getapi(apiUrl);
+home(apiUrl);
