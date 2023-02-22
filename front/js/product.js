@@ -51,26 +51,18 @@ async function productPage(url) {
         productColor.appendChild(color);
     }
 
-    //Memorise color choice
-    /*productColor.setAttribute("onchange", "colorChoice()");
-    function colorChoice() {
-        let colorChosed = productColor.value;
-        console.log(colorChosed)
-    }*/
+    //Save information by clicking on the "Ajout au panier" button
+    
 
-    //Number of items
-    let counter = document.querySelector('#quantity');
-    let quantity = 0;
-    counter.addEventListener('input', function () {
-        quantity = counter.valueAsNumber;
-    });
+    //Product quantity
+    let quantity;
+
+    //Product color chosed
+    let colorChosed = document.querySelector("#colors").value;
 
     //Add product info to an array
-    function infos() {
-        let infos = [id, quantity, colorChosed]
-        console.log(infos)
-    }
-    document.querySelector("#addToCart").setAttribute("onclick", "infos()");
+    let infos = [id, quantity, colorChosed]
+    console.log(infos)
 
 }
 
