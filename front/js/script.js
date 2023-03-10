@@ -9,7 +9,7 @@ fetch(apiUrl)
             return response.json();
         }
 
-        //if error, message report by line 50
+        //if error, message report by catch
         throw new Error('Y a un problème chef !');
     })
     .then(data => {
