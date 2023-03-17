@@ -46,47 +46,59 @@ fetch(apiUrl)
         }
 
         //Save information by clicking on the "Ajouter au panier" button
-        const cart = {};
+        // La récupération/creation du panier
+        // D'abord, on vérifie qu'on a un panier d'enregistré
+        // Si on a un panier enregistré, bah, c'est celui qu'on utilise
+        // sinon on crée un panier vide
+
         document.getElementById("addToCart").addEventListener("click", function () {
+            //Cart
+            const cart = getCart();
+
             //Product quantity
             let quantity = document.querySelector("#quantity").value;
 
             //Product color chosed
             let colorChosed = document.querySelector("#colors").value;
 
+            //If no quantity has been selected, error msg
+            if (quantity <= 0) {
+                alert("Sélectionner une quantité");
+                return;
+            }
+
+            //If no color has been selected, error msg
+            if (!colorChosed) {
+                alert("Choisir une couleur");
+                return;
+            }
+
             //Add product infos chosed to an object
             const product = {
                 id: id,
-                quantity: quantity,
+                quantity: Number(quantity),
                 colorChosed: colorChosed
             };
 
-            //const total = quantity +
-            if (product.quantity > 0 && product.colorChosed) {
-                const key = product.id + product.colorChosed;
-                if (key in cart && quantity > 100 - JSON.parse(localStorage.getItem("cart"))[key].quantity) {
-                    console.log("trop grand")
-                    alert("Sélectionner une quantité inférieure ou égale à " + 100 - JSON.parse(localStorage.getItem("cart"))[key].quantity)
-                }
-                if (key in cart && product.quantity <= 100 - JSON.parse(localStorage.getItem("cart"))[key].quantity) {
-                    console.log("assez petit")
-                    cart[key].quantity += product.quantity;
-                } else {
-                    cart[key] = product;
-                }
+            //Unique id
+            const key = product.id + product.colorChosed;
 
-                localStorage.setItem("cart", JSON.stringify(cart));
+            //If there is too many identical items in the cart, error msg
+            if (key in cart && quantity > 100 - cart[key].quantity) {
+                alert("Sélectionner une quantité inférieure ou égale à " + (100 - cart[key].quantity));
+                return;
             }
 
-            if (quantity <= 0) {
-                alert("Sélectionner une quantité")
+            //If some identical item(s) exist in cart, addition of the selected quantity to the quantity in the cart
+            if (key in cart) {
+                cart[key].quantity += product.quantity;
+            //If no identical item exist in cart, add to cart
+            } else {
+                cart[key] = product;
             }
 
-
-            if (!colorChosed) {
-                alert("Choisir une couleur")
-            }
-
+            //Add item to cart
+            localStorage.setItem("cart", JSON.stringify(cart));
         });
     })
     .catch(error => {
