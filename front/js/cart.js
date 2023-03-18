@@ -1,10 +1,10 @@
 //stock API URL in var
 const apiUrl = "http://localhost:3000/api/products/";
 
-//Price recovery array by item lot
-let totalPriceArray = [];
-//Item quantity recovery array
-let totalQuantityArray = [];
+//Total price value
+let totalPriceValue = 0;
+//Total item quantity value
+let totalQuantityValue = 0;
 
 //Local storage conversion thanks to "JSON.parse()" method, to manipulable form (object)
 const cart = JSON.parse(localStorage.getItem("cart"));
@@ -66,14 +66,7 @@ for (const productKey in cart) {
             let deleteItem = document.createElement("p");
             deleteItem.setAttribute("class", "deleteItem");
             deleteItem.innerText = "Supprimer";
-            deleteItem.addEventListener("click", function () {
-                // deleteItem.closest(".cart__item").remove()
-                // remove element in cart
-                // add cart to local STorage
-                // console.log(cart)
-                // console.log(cart[deleteItem.closest(".cart__item").dataset["id"] + deleteItem.closest(".cart__item").dataset["color"]])
-                // console.log(cart)
-            })
+
             contentSettingsDelete.appendChild(deleteItem);
 
             //Création of <img> element for each selected item/product (picture of it), add src and alt attributes
@@ -98,11 +91,11 @@ for (const productKey in cart) {
             quantity.innerText = "Qté : ";
             contentSettingsQuantity.appendChild(quantity);
 
-            //For each selected item/product, add price multiplied by quantity (its total) to price recovery array
-            totalPriceArray.push(product.quantity * data.price);
+            //For each selected item/product, add price multiplied by quantity (its total) to price value
+            totalPriceValue += data.price * product.quantity;
 
-            //For each selected item/product, add its quantity to quantity recovery array
-            totalQuantityArray.push(Number(product.quantity));
+            //For each selected item/product, add its quantity to quantity value
+            totalQuantityValue += Number(product.quantity);
 
             //Création of <input> element (in settings quantity <div>) for each item/product (number input to 1 to 100)
             let chooseQuantity = document.createElement("input");
@@ -114,19 +107,33 @@ for (const productKey in cart) {
             chooseQuantity.setAttribute("value", product.quantity);
             contentSettingsQuantity.appendChild(chooseQuantity);
             chooseQuantity.setAttribute("contenteditable", "true");
-            chooseQuantity.addEventListener("blur", function () {
-                cart[deleteItem.closest(".cart__item").dataset["id"] + deleteItem.closest(".cart__item").dataset["color"]].quantity = chooseQuantity.value;
-                localStorage.setItem("cart", JSON.stringify(cart));
-            })
 
-
-            //Calulation of total price
+            //Display of total price value
             let totalPrice = document.getElementById("totalPrice");
-            totalPrice.innerText = totalPriceArray.reduceRight((acc, cur) => acc + cur, 0);
+            totalPrice.innerText = totalPriceValue;
 
-            // Calculation of total quantity
+            //Display of total quantity value
             let totalQuantity = document.getElementById("totalQuantity");
-            totalQuantity.innerText = totalQuantityArray.reduceRight((acc, cur) => acc + cur, 0);
+            totalQuantity.innerText = totalQuantityValue;
+
+            //Change quantity input event
+            chooseQuantity.addEventListener("change", function () {
+                //
+                cart[product.id + product.colorChosed].quantity = chooseQuantity.value;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                // recalculate total item quantity and total price
+
+            });
+
+            //Delete button event
+            deleteItem.addEventListener("click", function () {
+                const elementToDelete = deleteItem.closest(".cart__item");
+                delete cart[elementToDelete.dataset["id"] + elementToDelete.dataset["color"]];
+                elementToDelete.remove();
+                localStorage.setItem("cart", JSON.stringify(cart));
+                // recalculate total item quantity and total price
+
+            });
         })
         .catch(error => {
             //alert messsage if error
