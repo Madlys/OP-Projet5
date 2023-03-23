@@ -118,21 +118,35 @@ for (const productKey in cart) {
 
             //Change quantity input event
             chooseQuantity.addEventListener("change", function () {
-                //
-                cart[product.id + product.colorChosed].quantity = chooseQuantity.value;
-                localStorage.setItem("cart", JSON.stringify(cart));
-                // recalculate total item quantity and total price
-
+                    console.log(chooseQuantity.value);
+                    console.log(chooseQuantity.getAttribute("value"));
+                if (chooseQuantity.value > 100) {
+                    alert("Sélectionner une quantité inférieure ou égale à 100");
+                    //Displays the previous/initiale value
+                    chooseQuantity.value = chooseQuantity.getAttribute("value");
+                } else {
+                    //Recalculate total item quantity and total price
+                    totalQuantity.innerText = totalQuantityValue += (chooseQuantity.value - cart[product.id + product.colorChosed].quantity);
+                    totalPrice.innerText = totalPriceValue += ((chooseQuantity.value - cart[product.id + product.colorChosed].quantity) * data.price);
+                    //Quantity value change in LocalStorage
+                    cart[product.id + product.colorChosed].quantity = chooseQuantity.value;
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    //Quantity value change in value attribute element
+                    chooseQuantity.setAttribute("value", chooseQuantity.value);
+                }
             });
 
             //Delete button event
             deleteItem.addEventListener("click", function () {
                 const elementToDelete = deleteItem.closest(".cart__item");
+                //Recalculate total item quantity and total price
+                totalQuantity.innerText = totalQuantityValue -= cart[product.id + product.colorChosed].quantity;
+                totalPrice.innerText = totalPriceValue -= (cart[product.id + product.colorChosed].quantity * data.price);
+                //Delation of item datas in LocalStorage
                 delete cart[elementToDelete.dataset["id"] + elementToDelete.dataset["color"]];
-                elementToDelete.remove();
                 localStorage.setItem("cart", JSON.stringify(cart));
-                // recalculate total item quantity and total price
-
+                //Delation of item in DOM
+                elementToDelete.remove();
             });
         })
         .catch(error => {
