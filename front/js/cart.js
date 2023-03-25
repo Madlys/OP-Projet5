@@ -6,6 +6,28 @@ let totalPriceValue = 0;
 //Total item quantity value
 let totalQuantityValue = 0;
 
+const isInputValid = (inputId, inputLabel, regexp) => {
+    const input = document.getElementById(inputId);
+    let isValid = true;
+    //Check if the input is empty, if not display an error msg and return false
+    if (input.value.length == 0) {
+        input.nextElementSibling.innerText = "Veuiller saisir votre " + inputLabel + ".";
+        isValid = false;
+    }
+    //Check if the input format match with the regexp, if not display an error msg and return false
+    else if (!input.value.match(regexp)) {
+        input.nextElementSibling.innerText = "Votre " + inputLabel + " n'est pas au bon format.";
+        isValid = false;
+    }
+    //If there is an input value in expected format, no error msg and return true
+    else {
+        input.nextElementSibling.innerText = "";
+    }
+
+    return isValid;
+};
+
+
 //Local storage conversion thanks to "JSON.parse()" method, to manipulable form (object)
 const cart = JSON.parse(localStorage.getItem("cart"));
 if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
@@ -126,7 +148,7 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 totalQuantity.innerText = totalQuantityValue;
 
                 //Change quantity input event
-                chooseQuantity.addEventListener("change", function () {
+                chooseQuantity.addEventListener("change", function (event) {
                     if (chooseQuantity.value > 100) {
                         alert("Sélectionner une quantité inférieure ou égale à 100");
                         //Displays the previous/initiale value
@@ -167,4 +189,37 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 alert(error.message);
             });
     }
+
+    //Form
+    document.getElementById("order").addEventListener("click", function () {
+        let check = [];
+        //First Name
+        if (isInputValid("firstName", "prénom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) == false) {
+            check.push(isInputValid("firstName", "prénom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm));
+        };
+
+        //Last Name
+        if (isInputValid("lastName", "nom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) == false) {
+            check.push(isInputValid("lastName", "nom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm));
+        };
+
+        //Adress
+        if (isInputValid("address", "adresse", /^([0-9]*( bis| ter)?,? )?([à-öù-üa-zA-Z -']{3,}[à-öù-üa-z]$)/gm) == false) {
+            check.push(isInputValid("address", "adresse", /^([0-9]*( bis| ter)?,? )?([à-öù-üa-zA-Z -']{3,}[à-öù-üa-z]$)/gm));
+        };
+
+        //City
+        if (isInputValid("city", "ville", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) == false) {
+            check.push(isInputValid("city", "ville", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm));
+        };
+
+        //Mail
+        if (isInputValid("email", "email", /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/gm) == false) {
+            check.push(isInputValid("email", "email", /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/gm));
+        };
+
+        if (check.length = 0) {
+            
+        }
+    })
 }
