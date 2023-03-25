@@ -153,6 +153,13 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                         alert("Sélectionner une quantité inférieure ou égale à 100");
                         //Displays the previous/initiale value
                         chooseQuantity.value = chooseQuantity.getAttribute("value");
+                    } else if (chooseQuantity.value == 0) {
+                        //delete item ...
+                        let undo = deleteItem.click();
+                        if (!undo) {
+                            //... or displays the previous/initiale value
+                            chooseQuantity.value = chooseQuantity.getAttribute("value");
+                        }
                     } else {
                         //Recalculate total item quantity and total price
                         totalQuantity.innerText = totalQuantityValue += (chooseQuantity.value - cart[product.id + product.colorChosed].quantity);
@@ -167,20 +174,22 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
 
                 //Delete button event
                 deleteItem.addEventListener("click", function () {
-                    const elementToDelete = deleteItem.closest(".cart__item");
-                    //Recalculate total item quantity and total price
-                    totalQuantity.innerText = totalQuantityValue -= cart[product.id + product.colorChosed].quantity;
-                    totalPrice.innerText = totalPriceValue -= (cart[product.id + product.colorChosed].quantity * data.price);
-                    //Delation of item datas in LocalStorage
-                    delete cart[elementToDelete.dataset["id"] + elementToDelete.dataset["color"]];
-                    localStorage.setItem("cart", JSON.stringify(cart));
-                    //Delation of item in DOM
-                    elementToDelete.remove();
-                    if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
-                        //change cart message
-                        document.getElementById("cartAndFormContainer").firstElementChild.innerText = "Votre panier est vide";
-                        //hide the total sentence and the form
-                        document.getElementById("cartAndFormContainer").lastElementChild.style.display = "none";
+                    if (window.confirm("Souhaitez-vous supprimer cet article?")) {
+                        const elementToDelete = deleteItem.closest(".cart__item");
+                        //Recalculate total item quantity and total price
+                        totalQuantity.innerText = totalQuantityValue -= cart[product.id + product.colorChosed].quantity;
+                        totalPrice.innerText = totalPriceValue -= (cart[product.id + product.colorChosed].quantity * data.price);
+                        //Delation of item datas in LocalStorage
+                        delete cart[elementToDelete.dataset["id"] + elementToDelete.dataset["color"]];
+                        localStorage.setItem("cart", JSON.stringify(cart));
+                        //Delation of item in DOM
+                        elementToDelete.remove();
+                        if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
+                            //change cart message
+                            document.getElementById("cartAndFormContainer").firstElementChild.innerText = "Votre panier est vide";
+                            //hide the total sentence and the form
+                            document.getElementById("cartAndFormContainer").lastElementChild.style.display = "none";
+                        }
                     }
                 });
             })
@@ -219,7 +228,7 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
         };
 
         if (check.length = 0) {
-            
+
         }
     })
 }
