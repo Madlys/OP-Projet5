@@ -6,6 +6,7 @@ let totalPriceValue = 0;
 //Total item quantity value
 let totalQuantityValue = 0;
 
+//Check input thanks to regexp
 const isInputValid = (inputId, inputLabel, regexp) => {
     const input = document.getElementById(inputId);
     let isValid = true;
@@ -198,37 +199,71 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 alert(error.message);
             });
     }
-
-    //Form
-    document.getElementById("order").addEventListener("click", function () {
-        let check = [];
-        //First Name
-        if (isInputValid("firstName", "prénom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) == false) {
-            check.push(isInputValid("firstName", "prénom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm));
-        };
-
-        //Last Name
-        if (isInputValid("lastName", "nom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) == false) {
-            check.push(isInputValid("lastName", "nom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm));
-        };
-
-        //Adress
-        if (isInputValid("address", "adresse", /^([0-9]*( bis| ter)?,? )?([à-öù-üa-zA-Z -']{3,}[à-öù-üa-z]$)/gm) == false) {
-            check.push(isInputValid("address", "adresse", /^([0-9]*( bis| ter)?,? )?([à-öù-üa-zA-Z -']{3,}[à-öù-üa-z]$)/gm));
-        };
-
-        //City
-        if (isInputValid("city", "ville", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) == false) {
-            check.push(isInputValid("city", "ville", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm));
-        };
-
-        //Mail
-        if (isInputValid("email", "email", /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/gm) == false) {
-            check.push(isInputValid("email", "email", /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/gm));
-        };
-
-        if (check.length = 0) {
-
-        }
-    })
 }
+
+//Form
+document.getElementById("order").closest("form").addEventListener("submit", function (event) {
+    //stop form submission
+    event.preventDefault();
+
+    //Form datas submit
+    let productsId = [];
+    for (let i = 0; i < Object.entries(cart).length; i++) {
+        productsId.push(Object.entries(cart)[i][1].id);
+    }
+
+    //First Name
+    let isFormValid = isInputValid("firstName", "prénom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm);
+
+    //Last Name
+    isFormValid = isInputValid("lastName", "nom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) && isFormValid;
+
+    //Adress
+    isFormValid = isInputValid("address", "adresse", /^([0-9]*( bis| ter)?,? )?([à-öù-üa-zA-Z -']{3,}[à-öù-üa-z]$)/gm) && isFormValid;
+
+    //City
+    isFormValid = isInputValid("city", "ville", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) && isFormValid;
+
+    //Mail
+    isFormValid = isInputValid("email", "email", /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/gm) && isFormValid;
+
+    if (isFormValid) {
+        //request body construction
+        const requestBody = {
+            contact: {},
+            products: productsId
+        };
+        document.querySelectorAll('form.cart__order__form input:not([type=submit])').forEach((element) => {
+            requestBody.contact[element.id] = element.value;
+        });
+
+        fetch(apiUrl + 'order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(requestBody)
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Storing API data in form of JSON
+                    return response.json();
+                }
+
+                //if error, message report by catch
+                throw new Error("Une erreur inconnue s'est produite");
+            })
+            .then(data => {
+                console.log(data)
+
+                //redirection vers page confirmation
+                //afficher le n° de commande sur la page de confirmation
+                //+ ajouter n° de commande à l'Url
+                //+suppression panier (localstorage)
+            })
+            .catch(error => {
+                //alert messsage if error
+                alert(error.message);
+            });
+    }
+})

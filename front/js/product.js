@@ -16,7 +16,10 @@ fetch(apiUrl)
         throw new Error('Y a un problème chef !');
     })
     .then(data => {
-
+        //if product datas are unfined
+        if (!data) {
+            alert("Victime de son succès, ce produit ne semble plus disponible!")
+        }
         //Add product page title
         document.querySelector("title").innerText = data.name;
 
@@ -44,12 +47,6 @@ fetch(apiUrl)
             color.innerText = data.colors[i];
             productColor.appendChild(color);
         }
-
-        //Save information by clicking on the "Ajouter au panier" button
-        // La récupération/creation du panier
-        // D'abord, on vérifie qu'on a un panier d'enregistré
-        // Si on a un panier enregistré, bah, c'est celui qu'on utilise
-        // sinon on crée un panier vide
 
         document.getElementById("addToCart").addEventListener("click", function () {
             //Cart
