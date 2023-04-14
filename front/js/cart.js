@@ -254,15 +254,14 @@ document.getElementById("order").closest("form").addEventListener("submit", func
                 throw new Error("Une erreur inconnue s'est produite");
             })
             .then(data => {
-                console.log(data.orderId);
+                //Empty the cart
+                localStorage.clear();
 
-
-                // window.location.href = "./confirmation.html";
-
-                //redirection vers page confirmation
-                //afficher le n° de commande sur la page de confirmation
-                //+ ajouter n° de commande à l'Url
-                //+suppression panier (localstorage)
+                //Add id to the confirmation page URL
+                let confirmationFrontUrl = new URL("confirmation.html", 'http://127.0.0.1:5500/front/html/confirmation.html');
+                confirmationFrontUrl.searchParams.append('orderId', data.orderId);
+                //Redirects to the confirmation page
+                window.location.href = confirmationFrontUrl;
             })
             .catch(error => {
                 //alert messsage if error
