@@ -254,7 +254,10 @@ document.getElementById("order").closest("form").addEventListener("submit", func
                 throw new Error("Une erreur inconnue s'est produite");
             })
             .then(data => {
-                console.log(data)
+                console.log(data.orderId);
+
+
+                // window.location.href = "./confirmation.html";
 
                 //redirection vers page confirmation
                 //afficher le n° de commande sur la page de confirmation
