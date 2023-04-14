@@ -12,8 +12,13 @@ fetch(apiUrl)
             return response.json();
         }
 
-        //if error, message report by catch
-        throw new Error('Y a un problème chef !');
+        //If ressoure is not found, message report by catch
+        if (response.status == 404) {
+            throw new Error('Le produit n\'existe pas');
+        }
+
+        //if other error, message report by catch
+        throw new Error('Une erreur inconnue s\'est produite');
     })
     .then(data => {
         //if product datas are unfined
@@ -61,6 +66,12 @@ fetch(apiUrl)
             //If no quantity has been selected, error msg
             if (quantity <= 0) {
                 alert("Sélectionner une quantité");
+                return;
+            }
+
+            //If the item don't exist in cart but than the chosed quantity is superior to 100, error msg
+            if (quantity > 100) {
+                alert("Sélectionner une quantité inférieure ou égale à 100");
                 return;
             }
 

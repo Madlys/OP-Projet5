@@ -10,7 +10,7 @@ fetch(apiUrl)
         }
 
         //if error, message report by catch
-        throw new Error('Y a un problème chef !');
+        throw new Error('Une erreur inconnue s\'est produite');
     })
     .then(data => {
         //Iterate on data
