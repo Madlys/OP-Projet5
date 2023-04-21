@@ -1,7 +1,7 @@
 //stock API URL in var
 const apiUrl = "http://localhost:3000/api/products";
 
-// Storing response thanks to fetch() method
+//Storing response thanks to fetch() method
 fetch(apiUrl)
     .then(response => {
         if (response.ok) {
@@ -18,9 +18,7 @@ fetch(apiUrl)
             //Create HTML anchor
             let itemElement = document.querySelector("#items");
             let a = document.createElement("a");
-            let productFrontUrl = new URL("product.html", 'http://127.0.0.1:5500/front/html/?id=ergreg&categorie=rgbdbre&');
-            productFrontUrl.searchParams.append('id', data[i]._id);
-            a.setAttribute("href", productFrontUrl);
+            a.setAttribute("href", '/front/html/product.html?id=' + data[i]._id);
             itemElement.appendChild(a);
 
             let article = document.createElement("article");
@@ -32,7 +30,7 @@ fetch(apiUrl)
             imageElement.setAttribute("alt", data[i].altTxt);
             article.appendChild(imageElement);
 
-            //Add product title/name
+            //Add product name
             let h3 = document.createElement("h3");
             h3.setAttribute("class", "productName");
             h3.innerText = data[i].name;

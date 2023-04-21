@@ -10,12 +10,12 @@ let totalQuantityValue = 0;
 const isInputValid = (inputId, inputLabel, regexp) => {
     const input = document.getElementById(inputId);
     let isValid = true;
-    //Check if the input is empty, if not display an error msg and return false
+    //Check if the input is empty, if not, display an error msg and return false
     if (input.value.length == 0) {
         input.nextElementSibling.innerText = "Veuiller saisir votre " + inputLabel + ".";
         isValid = false;
     }
-    //Check if the input format match with the regexp, if not display an error msg and return false
+    //Check if the input format match with the regexp, if not, display an error msg and return false
     else if (!input.value.match(regexp)) {
         input.nextElementSibling.innerText = "Votre " + inputLabel + " n'est pas au bon format.";
         isValid = false;
@@ -29,8 +29,8 @@ const isInputValid = (inputId, inputLabel, regexp) => {
 };
 
 
-//Local storage conversion thanks to "JSON.parse()" method, to manipulable form (object)
-const cart = JSON.parse(localStorage.getItem("cart"));
+//Local storage conversion thanks to "JSON.parse()" method, to manipulable form (object) (in getCart())
+const cart = getCart();
 if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
     //change cart message
     document.getElementById("cartAndFormContainer").firstElementChild.innerText = "Votre panier est vide";
@@ -56,42 +56,42 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 }
 
                 //if error, message report by catch
-                throw new Error('Y a un problème chef !');
+                throw new Error('Une erreur inconnue s\'est produite');
             })
             .then(data => {
-                //Création of <article> element for each item/product, add data attributes (id and color) and id attribute
+                //Creation of <article> element for each item/product, add data attributes (id and color) and id attribute
                 let item = document.createElement("article");
                 item.setAttribute("class", "cart__item");
                 item.setAttribute("data-id", product.id);
                 item.setAttribute("data-color", product.colorChosed);
                 document.getElementById("cart__items").appendChild(item);
 
-                //Création of <div> element which will contain a picture/img for each item/product, add class attribute
+                //Creation of <div> element which will contain a picture/img for each item/product, add class attribute
                 let img = document.createElement("div");
                 img.setAttribute("class", "cart__item__img");
                 item.appendChild(img);
 
-                //Création of <div> element for each item/product which will contain a infos about it, add class attribute
+                //Creation of <div> element for each item/product which will contain a infos about it, add class attribute
                 let content = document.createElement("div");
                 content.setAttribute("class", "cart__item__content");
                 item.appendChild(content);
 
-                //Création of <div> element for each item/product which will contain a description of it, add class attribute
+                //Creation of <div> element for each item/product which will contain a description of it, add class attribute
                 let contentDescription = document.createElement("div");
                 contentDescription.setAttribute("class", "cart__item__content__description");
                 content.appendChild(contentDescription);
 
-                //Création of <div> element for each item/product which will contain settings of it, add class attribute
+                //Creation of <div> element for each item/product which will contain settings of it, add class attribute
                 let contentSettings = document.createElement("div");
                 contentSettings.setAttribute("class", "cart__item__content__settings");
                 content.appendChild(contentSettings);
 
-                //Création of <div> element (in settings <div>) for each item/product which will contain its quantity, add class attribute
+                //Creation of <div> element (in settings <div>) for each item/product which will contain its quantity, add class attribute
                 let contentSettingsQuantity = document.createElement("div");
                 contentSettingsQuantity.setAttribute("class", "cart__item__content__settings__quantity");
                 contentSettings.appendChild(contentSettingsQuantity);
 
-                //Création of <div> element (in settings <div>) for each item/product which will contain a delete button, add class attribute
+                //Creation of <div> element (in settings <div>) for each item/product which will contain a delete button, add class attribute
                 let contentSettingsDelete = document.createElement("div");
                 contentSettingsDelete.setAttribute("class", "cart__item__content__settings__delete");
                 contentSettings.appendChild(contentSettingsDelete);
@@ -101,13 +101,13 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 deleteItem.innerText = "Supprimer";
                 contentSettingsDelete.appendChild(deleteItem);
 
-                //Création of <img> element for each selected item/product (picture of it), add src and alt attributes
+                //Creation of <img> element for each selected item/product (picture of it), add src and alt attributes
                 let imgProduct = document.createElement("img");
                 imgProduct.setAttribute("src", data.imageUrl);
                 imgProduct.setAttribute("alt", data.altTxt);
                 img.appendChild(imgProduct);
 
-                //Création of <h2> and <p> elements for each selected item/product, add text (its name, price and color)
+                //Creation of <h2> and <p> elements for each selected item/product, add text (its name, price and color)
                 let name = document.createElement("h2");
                 name.innerText = data.name;
                 contentDescription.appendChild(name);
@@ -118,9 +118,9 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 price.innerText = data.price + "€";
                 contentDescription.appendChild(price);
 
-                //Création of <p> element for each selected item/product, add text (its quantity)
+                //Creation of <p> element for each selected item/product, add text (its quantity)
                 let quantity = document.createElement("p");
-                quantity.innerText = "Qté : ";
+                quantity.innerText = "Qte : ";
                 contentSettingsQuantity.appendChild(quantity);
 
                 //For each selected item/product, add price multiplied by quantity (its total) to price value
@@ -129,7 +129,7 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 //For each selected item/product, add its quantity to quantity value
                 totalQuantityValue += Number(product.quantity);
 
-                //Création of <input> element (in settings quantity <div>) for each item/product (number input to 1 to 100)
+                //Creation of <input> element (in settings quantity <div>) for each item/product (number input to 1 to 100)
                 let chooseQuantity = document.createElement("input");
                 chooseQuantity.setAttribute("type", "number");
                 chooseQuantity.setAttribute("class", "itemQuantity");
@@ -150,15 +150,18 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
 
                 //Change quantity input event
                 chooseQuantity.addEventListener("change", function (event) {
+                    //if the selected value is superior to 100, error msg
                     if (chooseQuantity.value > 100) {
-                        alert("Sélectionner une quantité inférieure ou égale à 100");
+                        alert("Selectionner une quantite inferieure ou egale à 100");
                         //Displays the previous/initiale value
                         chooseQuantity.value = chooseQuantity.getAttribute("value");
-                    } else if (chooseQuantity.value == 0) {
-                        //delete item ...
+                    }
+                    //if the selected value is 0
+                    else if (chooseQuantity.value == 0) {
+                        //call delete button click event to delete item
                         let undo = deleteItem.click();
+                        //if the user choose "Cancel", displays the previous/initiale value
                         if (!undo) {
-                            //... or displays the previous/initiale value
                             chooseQuantity.value = chooseQuantity.getAttribute("value");
                         }
                     } else {
@@ -173,8 +176,10 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                     }
                 });
 
-                //Delete button event
+                //Delete button click event
                 deleteItem.addEventListener("click", function () {
+                    //Display confirm message
+                    //if user choose "OK"
                     if (window.confirm("Souhaitez-vous supprimer cet article?")) {
                         const elementToDelete = deleteItem.closest(".cart__item");
                         //Recalculate total item quantity and total price
@@ -201,7 +206,7 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
     }
 }
 
-//Form
+//Form submit event
 document.getElementById("order").closest("form").addEventListener("submit", function (event) {
     //stop form submission
     event.preventDefault();
@@ -212,21 +217,22 @@ document.getElementById("order").closest("form").addEventListener("submit", func
         productsId.push(Object.entries(cart)[i][1].id);
     }
 
-    //First Name
-    let isFormValid = isInputValid("firstName", "prénom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm);
+    //Check First Name format
+    let isFormValid = isInputValid("firstName", "prenom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm);
 
-    //Last Name
+    //Check Last Name format
     isFormValid = isInputValid("lastName", "nom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) && isFormValid;
 
-    //Adress
+    //Check Adress format
     isFormValid = isInputValid("address", "adresse", /^([0-9]*( bis| ter)?,? )?([à-öù-üa-zA-Z -']{3,}[à-öù-üa-z]$)/gm) && isFormValid;
 
-    //City
+    //Check City format
     isFormValid = isInputValid("city", "ville", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) && isFormValid;
 
-    //Mail
+    //Check Mail format
     isFormValid = isInputValid("email", "email", /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/gm) && isFormValid;
 
+    //if all form input format are valid
     if (isFormValid) {
         //request body construction
         const requestBody = {
@@ -237,6 +243,7 @@ document.getElementById("order").closest("form").addEventListener("submit", func
             requestBody.contact[element.id] = element.value;
         });
 
+        //post request
         fetch(apiUrl + 'order', {
             method: 'POST',
             headers: {
@@ -254,14 +261,11 @@ document.getElementById("order").closest("form").addEventListener("submit", func
                 throw new Error("Une erreur inconnue s'est produite");
             })
             .then(data => {
-                //Empty the cart
+                //Clear the cart by emptying the local storage
                 localStorage.clear();
 
-                //Add id to the confirmation page URL
-                let confirmationFrontUrl = new URL("confirmation.html", 'http://127.0.0.1:5500/front/html/confirmation.html');
-                confirmationFrontUrl.searchParams.append('orderId', data.orderId);
-                //Redirects to the confirmation page
-                window.location.href = confirmationFrontUrl;
+                //Redirect to the confirmation page and add the order ID to the URL
+                window.location.href = "../html/confirmation.html?orderId=" + data.orderId;
             })
             .catch(error => {
                 //alert messsage if error

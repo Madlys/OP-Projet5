@@ -1,4 +1,4 @@
-// id recovery
+//id recovery
 const id = new URL(window.location.toLocaleString()).searchParams.get("id");
 
 //stock API URL in var
@@ -25,6 +25,7 @@ fetch(apiUrl)
         if (!data) {
             alert("Victime de son succès, ce produit ne semble plus disponible!")
         }
+
         //Add product page title
         document.querySelector("title").innerText = data.name;
 
@@ -88,7 +89,7 @@ fetch(apiUrl)
                 colorChosed: colorChosed
             };
 
-            //Unique id
+            //Unique id (id+color)
             const key = product.id + product.colorChosed;
 
             //If there is too many identical items in the cart, error msg
@@ -100,12 +101,13 @@ fetch(apiUrl)
             //If some identical item(s) exist in cart, addition of the selected quantity to the quantity in the cart
             if (key in cart) {
                 cart[key].quantity += product.quantity;
+
             //If no identical item exist in cart, add to cart
             } else {
                 cart[key] = product;
             }
 
-            //Add item to cart
+            //Add item to "cart" key in localStorage
             localStorage.setItem("cart", JSON.stringify(cart));
         });
     })
