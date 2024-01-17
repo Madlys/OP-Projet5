@@ -1,6 +1,6 @@
-//Order id recovery
+// Order ID recovery
 const orderId = new URL(window.location.toLocaleString()).searchParams.get("orderId");
 
-//Display the order id on the confirmation page
+// Displaying the order ID on the confirmation page
 let orderIdDisplay = document.getElementById("orderId");
 orderIdDisplay.innerText = orderId;

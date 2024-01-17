@@ -1,26 +1,26 @@
-//stock API URL in var
+// Storing API URL in a constant
 const apiUrl = "http://localhost:3000/api/products/";
 
-//Total price value
+// Total price value initialization
 let totalPriceValue = 0;
-//Total item quantity value
+// Total item quantity value initialization
 let totalQuantityValue = 0;
 
-//Check input thanks to regexp
+// Checking input using regexp
 const isInputValid = (inputId, inputLabel, regexp) => {
     const input = document.getElementById(inputId);
     let isValid = true;
-    //Check if the input is empty, if not, display an error msg and return false
+    // If the input is empty, display an error message and return false
     if (input.value.length == 0) {
         input.nextElementSibling.innerText = "Veuiller saisir votre " + inputLabel + ".";
         isValid = false;
     }
-    //Check if the input format match with the regexp, if not, display an error msg and return false
+    // If the input format don't match with the regexp, display an error message and return false
     else if (!input.value.match(regexp)) {
         input.nextElementSibling.innerText = "Votre " + inputLabel + " n'est pas au bon format.";
         isValid = false;
     }
-    //If there is an input value in expected format, no error msg and return true
+    // If the input value is in expected format, no error msg and return true
     else {
         input.nextElementSibling.innerText = "";
     }
@@ -29,85 +29,90 @@ const isInputValid = (inputId, inputLabel, regexp) => {
 };
 
 
-//Local storage conversion thanks to "JSON.parse()" method, to manipulable form (object) (in getCart())
+/*  Local storage conversion using "JSON.parse()" method in getCart() function,
+to manipulable form (object in a constante) */
 const cart = getCart();
+
+// If cart object is empty
 if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
     //change cart message
     document.getElementById("cartAndFormContainer").firstElementChild.innerText = "Votre panier est vide";
-    //hide the total sentence and the form
+    // hide the total price sentence and the form
     document.getElementById("cartAndFormContainer").lastElementChild.style.display = "none";
-} else {
-    //change cart message
+}
+// If cart object contains item(s)
+else {
+    // change cart message
     document.getElementById("cartAndFormContainer").firstElementChild.innerText = "Votre panier";
-    //display the total sentence and the form
+    // display the total price sentence and the form
     document.getElementById("cartAndFormContainer").lastElementChild.removeAttribute("display");
 
-    //for each product of cart
+    // For each product in cart...
     for (const productKey in cart) {
-        //Product constant contains product's data
+        // Product constant contains product's datas
         const product = cart[productKey];
 
-        //Retrieve product data from the API thanks to its id
+        // Recovery of product data, from the API, using its ID
         fetch(apiUrl + product.id)
             .then(response => {
                 if (response.ok) {
-                    // Storing API data in form of JSON
+                    // Storing datas from API as JSON
                     return response.json();
                 }
 
-                //if error, message report by catch
+                // If error, message report by catch
                 throw new Error('Une erreur inconnue s\'est produite');
             })
             .then(data => {
-                //Creation of <article> element for each item/product, add data attributes (id and color) and id attribute
+                // Creating a <article> element, adding data (ID and color) and ID attributes
                 let item = document.createElement("article");
                 item.setAttribute("class", "cart__item");
                 item.setAttribute("data-id", product.id);
                 item.setAttribute("data-color", product.colorChosed);
                 document.getElementById("cart__items").appendChild(item);
 
-                //Creation of <div> element which will contain a picture/img for each item/product, add class attribute
+                // Creating a <div> element which will contain the product picture/img, adding class attribute
                 let img = document.createElement("div");
                 img.setAttribute("class", "cart__item__img");
                 item.appendChild(img);
 
-                //Creation of <div> element for each item/product which will contain a infos about it, add class attribute
+                // Creating a <div> element which will contain the product infos, adding class attribute
                 let content = document.createElement("div");
                 content.setAttribute("class", "cart__item__content");
                 item.appendChild(content);
 
-                //Creation of <div> element for each item/product which will contain a description of it, add class attribute
+                // Creating a <div> element which will contain the product description, adding class attribute
                 let contentDescription = document.createElement("div");
                 contentDescription.setAttribute("class", "cart__item__content__description");
                 content.appendChild(contentDescription);
 
-                //Creation of <div> element for each item/product which will contain settings of it, add class attribute
+                // Creating a <div> element which will contain the product settings, adding class attribute
                 let contentSettings = document.createElement("div");
                 contentSettings.setAttribute("class", "cart__item__content__settings");
                 content.appendChild(contentSettings);
 
-                //Creation of <div> element (in settings <div>) for each item/product which will contain its quantity, add class attribute
+                // Creating a <div> element (in <div> settings) which will contain the product quantity, adding class attribute
                 let contentSettingsQuantity = document.createElement("div");
                 contentSettingsQuantity.setAttribute("class", "cart__item__content__settings__quantity");
                 contentSettings.appendChild(contentSettingsQuantity);
 
-                //Creation of <div> element (in settings <div>) for each item/product which will contain a delete button, add class attribute
+                //Creating a <div> element (in <div> settings) which will contain a delete button, adding class attribute
                 let contentSettingsDelete = document.createElement("div");
                 contentSettingsDelete.setAttribute("class", "cart__item__content__settings__delete");
                 contentSettings.appendChild(contentSettingsDelete);
-                //add button text and a class attribute
+                // adding button text and a class attribute
                 let deleteItem = document.createElement("p");
                 deleteItem.setAttribute("class", "deleteItem");
                 deleteItem.innerText = "Supprimer";
                 contentSettingsDelete.appendChild(deleteItem);
 
-                //Creation of <img> element for each selected item/product (picture of it), add src and alt attributes
+                // Creating an <img> element (product picture), adding src and alt attributes
                 let imgProduct = document.createElement("img");
                 imgProduct.setAttribute("src", data.imageUrl);
                 imgProduct.setAttribute("alt", data.altTxt);
                 img.appendChild(imgProduct);
 
-                //Creation of <h2> and <p> elements for each selected item/product, add text (its name, price and color)
+                // Creating a <h2> and <p> elements, adding text (product name, price and color)
                 let name = document.createElement("h2");
                 name.innerText = data.name;
                 contentDescription.appendChild(name);
@@ -118,18 +123,18 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 price.innerText = data.price + "€";
                 contentDescription.appendChild(price);
 
-                //Creation of <p> element for each selected item/product, add text (its quantity)
+                // Creating a <p> element, adding text (product quantity)
                 let quantity = document.createElement("p");
                 quantity.innerText = "Qte : ";
                 contentSettingsQuantity.appendChild(quantity);
 
-                //For each selected item/product, add price multiplied by quantity (its total) to price value
+                // Adding price multiplied by quantity (total product) to price value
                 totalPriceValue += data.price * product.quantity;
 
-                //For each selected item/product, add its quantity to quantity value
+                // Adding product quantity to quantity value
                 totalQuantityValue += Number(product.quantity);
 
-                //Creation of <input> element (in settings quantity <div>) for each item/product (number input to 1 to 100)
+                // Creating an <input> element (in <div> settings quantity, number input to 1 to 100)
                 let chooseQuantity = document.createElement("input");
                 chooseQuantity.setAttribute("type", "number");
                 chooseQuantity.setAttribute("class", "itemQuantity");
@@ -140,60 +145,61 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
                 contentSettingsQuantity.appendChild(chooseQuantity);
                 chooseQuantity.setAttribute("contenteditable", "true");
 
-                //Display of total price value
+                // Display of total price
                 let totalPrice = document.getElementById("totalPrice");
                 totalPrice.innerText = totalPriceValue;
 
-                //Display of total quantity value
+                // Display of total quantity
                 let totalQuantity = document.getElementById("totalQuantity");
                 totalQuantity.innerText = totalQuantityValue;
 
-                //Change quantity input event
+                // Change quantity event
                 chooseQuantity.addEventListener("change", function (event) {
-                    //if the selected value is superior to 100, error msg
+                    // if the selected value is superior to 100, error msg
                     if (chooseQuantity.value > 100) {
                         alert("Selectionner une quantite inferieure ou egale à 100");
                         //Displays the previous/initiale value
                         chooseQuantity.value = chooseQuantity.getAttribute("value");
                     }
-                    //if the selected value is 0
+                    // if the selected value is 0
                     else if (chooseQuantity.value == 0) {
-                        //call delete button click event to delete item
+                        // call delete button click event to delete item
                         let undo = deleteItem.click();
-                        //if the user choose "Cancel", displays the previous/initiale value
+                        // if the user choose "Cancel", show the previous/initiale value
                         if (!undo) {
                             chooseQuantity.value = chooseQuantity.getAttribute("value");
                         }
                     } else {
-                        //Recalculate total item quantity and total price
+                        // Recalculation total item quantity and total price
                         totalQuantity.innerText = totalQuantityValue += (chooseQuantity.value - cart[product.id + product.colorChosed].quantity);
                         totalPrice.innerText = totalPriceValue += ((chooseQuantity.value - cart[product.id + product.colorChosed].quantity) * data.price);
-                        //Quantity value change in LocalStorage
+                        // Quantity value change in LocalStorage
                         cart[product.id + product.colorChosed].quantity = chooseQuantity.value;
                         localStorage.setItem("cart", JSON.stringify(cart));
-                        //Quantity value change in value attribute element
+                        // Quantity value change in value attribute element
                         chooseQuantity.setAttribute("value", chooseQuantity.value);
                     }
                 });
 
-                //Delete button click event
+                // Delete button, "click" event
                 deleteItem.addEventListener("click", function () {
-                    //Display confirm message
-                    //if user choose "OK"
+                    // At displaying delete confirm message ...
+                    // if user choose "OK"
                     if (window.confirm("Souhaitez-vous supprimer cet article?")) {
                         const elementToDelete = deleteItem.closest(".cart__item");
-                        //Recalculate total item quantity and total price
+                        // Recalculation total item quantity and total price
                         totalQuantity.innerText = totalQuantityValue -= cart[product.id + product.colorChosed].quantity;
                         totalPrice.innerText = totalPriceValue -= (cart[product.id + product.colorChosed].quantity * data.price);
-                        //Delation of item datas in LocalStorage
+                        // Delation of item datas in LocalStorage
                         delete cart[elementToDelete.dataset["id"] + elementToDelete.dataset["color"]];
                         localStorage.setItem("cart", JSON.stringify(cart));
-                        //Delation of item in DOM
+                        // Delation of item DOM element
                         elementToDelete.remove();
+                        // If the product was the last item in cart...
                         if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
-                            //change cart message
+                            // change cart message
                             document.getElementById("cartAndFormContainer").firstElementChild.innerText = "Votre panier est vide";
-                            //hide the total sentence and the form
+                            // hide the total sentence and the form
                             document.getElementById("cartAndFormContainer").lastElementChild.style.display = "none";
                         }
                     }
@@ -206,35 +212,36 @@ if (localStorage.getItem("cart") == null || Object.keys(cart).length == 0) {
     }
 }
 
-//Form submit event
+// Form submit event
 document.getElementById("order").closest("form").addEventListener("submit", function (event) {
-    //stop form submission
+    // stop form submission default comportement
     event.preventDefault();
 
-    //Form datas submit
+    // Form datas submitting
     let productsId = [];
     for (let i = 0; i < Object.entries(cart).length; i++) {
         productsId.push(Object.entries(cart)[i][1].id);
     }
 
-    //Check First Name format
+    // Using regexp...
+    // Checking of First Name format
     let isFormValid = isInputValid("firstName", "prenom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm);
 
-    //Check Last Name format
+    //Checking of Last Name format
     isFormValid = isInputValid("lastName", "nom", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) && isFormValid;
 
-    //Check Adress format
+    //Checking of Adress format
     isFormValid = isInputValid("address", "adresse", /^([0-9]*( bis| ter)?,? )?([à-öù-üa-zA-Z -']{3,}[à-öù-üa-z]$)/gm) && isFormValid;
 
-    //Check City format
+    //Checking of City format
     isFormValid = isInputValid("city", "ville", /^[A-Za-z][à-öù-üa-zA-Z -]*[à-öù-üa-z]$/gm) && isFormValid;
 
-    //Check Mail format
+    //Checking of Mail format
     isFormValid = isInputValid("email", "email", /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/gm) && isFormValid;
 
-    //if all form input format are valid
+    // If all form inputs format are valid
     if (isFormValid) {
-        //request body construction
+        // Request body construction
         const requestBody = {
             contact: {},
             products: productsId
@@ -243,7 +250,7 @@ document.getElementById("order").closest("form").addEventListener("submit", func
             requestBody.contact[element.id] = element.value;
         });
 
-        //post request
+        // POST request
         fetch(apiUrl + 'order', {
             method: 'POST',
             headers: {
@@ -257,18 +264,18 @@ document.getElementById("order").closest("form").addEventListener("submit", func
                     return response.json();
                 }
 
-                //if error, message report by catch
+                // If error, message report by catch
                 throw new Error("Une erreur inconnue s'est produite");
             })
             .then(data => {
-                //Clear the cart by emptying the local storage
+                // Clear the cart by emptying the local storage
                 localStorage.clear();
 
-                //Redirect to the confirmation page and add the order ID to the URL
+                // Redirect to order confirmation page and add order ID to URL
                 window.location.href = "../html/confirmation.html?orderId=" + data.orderId;
             })
             .catch(error => {
-                //alert messsage if error
+                // alert messsage if error
                 alert(error.message);
             });
     }
